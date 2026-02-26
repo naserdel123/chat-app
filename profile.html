@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الملف الشخصي | دردشتي</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        :root {
+            --primary: #00d4aa;
+            --secondary: #667eea;
+            --bg-dark: #0f0f1a;
+            --bg-card: #1a1a2e;
+            --bg-light: #252540;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg-dark);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .bg-animation span {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 212, 170, 0.1);
+            animation: float 15s infinite linear;
+            border-radius: 50%;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+            text-decoration: none;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .back-btn:hover {
+            transform: translateX(-10px);
+            text-shadow: 0 0 20px rgba(0, 212, 170, 0.5);
+        }
+
+        .profile-card {
+            background: var(--bg-card);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            animation: cardEntry 0.8s ease;
+        }
+
+        @keyframes cardEntry {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .profile-header {
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255,255,255,0.1) 10px,
+                rgba(255,255,255,0.1) 20px
+            );
+            animation: slide 20s linear infinite;
+        }
+
+        @keyframes slide {
+            0% { transform: translate(-50%, -50%); }
+            100% { transform: translate(0, 0); }
+        }
+
+        .avatar-section {
+            position: relative;
+            margin-top: -75px;
+            text-align: center;
+            padding: 0 40px;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid var(--bg-card);
+            object-fit: cover;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(0, 212, 170, 0.4);
+        }
+
+        .change-avatar {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid var(--bg-card);
+        }
+
+        .change-avatar:hover {
+            transform: scale(1.2) rotate(15deg);
+        }
+
+        .profile-info {
+            padding: 30px 40px;
+            text-align: center;
+        }
+
+        .profile-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .profile-username {
+            color: var(--primary);
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .profile-bio {
+            color: #aaa;
+            font-size: 15px;
+            line-height: 1.8;
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 30px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 212, 170, 0.3);
+        }
+
+        .settings-section {
+            padding: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .setting-info h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .setting-info p {
+            font-size: 13px;
+            color: #888;
+        }
+
+        .toggle {
+            width: 60px;
+            height: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle.active {
+            background: var(--primary);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            right: 2px;
+            transition: all 0.3s;
+        }
+
+        .toggle.active::after {
+            right: 32px;
+        }
+
+        .danger-zone {
+            padding: 40px;
+            border-top: 1px solid rgba(255, 71, 87, 0.3);
+            background: rgba(255, 71, 87, 0.05);
+        }
+
+        .danger-btn {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .danger-btn:hover {
+            background: rgba(255, 71, 87, 0.3);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 600px) {
+            .stats-row { gap: 20px; }
+            .profile-actions { flex-direction: column; }
+            .action-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <div class="container">
+        <a href="chat.html" class="back-btn">← العودة للدردشات</a>
+
+        <div class="profile-card">
+            <div class="profile-header"></div>
+            
+            <div class="avatar-section">
+                <div class="avatar-wrapper">
+                    <img src="" alt="Profile" class="profile-avatar" id="profileAvatar">
+                    <div class="change-avatar" onclick="changeAvatar()">📷</div>
+                </div>
+            </div>
+
+            <div class="profile-info">
+                <h1 class="profile-name" id="profileName">اسم المستخدم</h1>
+                <p class="profile-username" id="profileUsername">@username</p>
+                <p class="profile-bio" id="profileBio">مرحباً! أنا أستخدم دردشتي للتواصل مع الأصدقاء.</p>
+                
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value" id="contactsCount">0</div>
+                        <div class="stat-label">جهة اتصال</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="groupsCount">0</div>
+                        <div class="stat-label">مجموعة</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="messagesCount">0</div>
+                        <div class="stat-label">رسالة</div>
+                    </div>
+                </div>
+
+                <div class="profile-actions">
+                    <button class="action-btn btn-primary" onclick="editProfile()">
+                        ✏️ تعديل الملف
+                    </button>
+                    <button class="action-btn btn-secondary" onclick="shareProfile()">
+                        🔗 مشاركة
+                    </button>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3 class="section-title">⚙️ الإعدادات</h3>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>الوضع الليلي</h4>
+                        <p>تفعيل المظهر الداكن للتطبيق</p>
+                    </div>
+                    <div class="toggle active" onclick="toggleSetting(this, 'darkMode')"></div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>الإشعارات</h4>
+                        <p>استلام إشعارات الرسائل الجديدة</p>
+                    </div>
+                    <div class="toggle active" onclick="toggleSetting(this, 'notifications')"></div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>الظهور متصلاً</h4>
+                        <p>إظهار حالتك للآخرين</p>
+                    </div>
+                    <div class="toggle active" onclick="toggleSetting(this, 'onlineStatus')"></div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>تأكيد القراءة</h4>
+                        <p>إظهار علامة ✓✓ عند قراءة الرسائل</p>
+                    </div>
+                    <div class="toggle active" onclick="toggleSetting(this, 'readReceipts')"></div>
+                </div>
+            </div>
+
+            <div class="danger-zone">
+                <h3 style="color: #ff4757; margin-bottom: 10px;">⚠️ منطقة الخطر</h3>
+                <p style="color: #888; font-size: 14px;">احذر! هذه الإجراءات لا يمكن التراجع عنها</p>
+                <button class="danger-btn" onclick="deleteAccount()">🗑️ حذف الحساب نهائياً</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // إنشاء خلفية متحركة
+        function createBackground() {
+            const container = document.getElementById('bgAnimation');
+            for(let i = 0; i < 20; i++) {
+                const span = document.createElement('span');
+                span.style.left = Math.random() * 100 + '%';
+                span.style.animationDelay = Math.random() * 15 + 's';
+                span.style.animationDuration = (10 + Math.random() * 10) + 's';
+                span.style.width = span.style.height = (Math.random() * 100 + 20) + 'px';
+                container.appendChild(span);
+            }
+        }
+        createBackground();
+
+        // تحميل بيانات المستخدم
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if(!currentUser) window.location.href = 'index.html';
+
+        function loadProfile() {
+            document.getElementById('profileAvatar').src = currentUser.avatar;
+            document.getElementById('profileName').textContent = currentUser.fullName;
+            document.getElementById('profileUsername').textContent = currentUser.username;
+            
+            if(currentUser.bio) {
+                document.getElementById('profileBio').textContent = currentUser.bio;
+            }
+
+            // الإحصائيات
+            document.getElementById('contactsCount').textContent = currentUser.contacts?.length || 0;
+            document.getElementById('groupsCount').textContent = currentUser.groups?.length || 0;
+            
+            let msgCount = 0;
+            const messages = JSON.parse(localStorage.getItem('messages') || '{}');
+            Object.values(messages).forEach(msgs => {
+                msgCount += msgs.filter(m => m.sender === currentUser.id).length;
+            });
+            document.getElementById('messagesCount').textContent = msgCount;
+        }
+
+        function changeAvatar() {
+            const newUrl = prompt('أدخل رابط الصورة الجديدة:', currentUser.avatar);
+            if(newUrl) {
+                currentUser.avatar = newUrl;
+                updateUser();
+                loadProfile();
+                showToast('✅ تم تحديث الصورة');
+            }
+        }
+
+        function editProfile() {
+            const newName = prompt('الاسم الجديد:', currentUser.fullName);
+            const newBio = prompt('نبذة عنك:', currentUser.bio || '');
+            
+            if(newName) {
+                currentUser.fullName = newName;
+                currentUser.bio = newBio;
+                updateUser();
+                loadProfile();
+                showToast('✅ تم حفظ التغييرات');
+            }
+        }
+
+        function shareProfile() {
+            const shareData = {
+                title: currentUser.fullName,
+                text: `تابع ${currentUser.fullName} على دردشتي!`,
+                url: window.location.origin + '?user=' + currentUser.username
+            };
+            
+            if(navigator.share) {
+                navigator.share(shareData);
+            } else {
+                navigator.clipboard.writeText(shareData.url);
+                showToast('🔗 تم نسخ الرابط');
+            }
+        }
+
+        function toggleSetting(element, setting) {
+            element.classList.toggle('active');
+            
+            if(!currentUser.settings) currentUser.settings = {};
+            currentUser.settings[setting] = element.classList.contains('active');
+            updateUser();
+        }
+
+        function updateUser() {
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const index = users.findIndex(u => u.id === currentUser.id);
+            if(index !== -1) users[index] = currentUser;
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        function deleteAccount() {
+            if(!confirm('⚠️ هل أنت متأكد من حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء!')) return;
+            if(!prompt('اكتب "DELETE" للتأكيد:') === 'DELETE') return;
+            
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const filtered = users.filter(u => u.id !== currentUser.id);
+            localStorage.setItem('users', JSON.stringify(filtered));
+            localStorage.removeItem('currentUser');
+            
+            showToast('🗑️ تم حذف الحساب');
+            setTimeout(() => window.location.href = 'index.html', 2000);
+        }
+
+        function showToast(message) {
+            // يمكن استخدام نفس دالة Toast من chat.html
+            alert(message);
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>
