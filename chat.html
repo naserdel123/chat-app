@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دردشتي | المحادثات</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        :root {
+            --primary: #00d4aa;
+            --secondary: #667eea;
+            --bg-dark: #0f0f1a;
+            --bg-card: #1a1a2e;
+            --bg-light: #252540;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 350px;
+            background: var(--bg-card);
+            border-left: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(0,212,170,0.2), rgba(102,126,234,0.2));
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            object-fit: cover;
+        }
+
+        .user-info h3 {
+            font-size: 16px;
+        }
+
+        .user-status {
+            font-size: 12px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+        }
+
+        .search-box {
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            color: white;
+            outline: none;
+        }
+
+        .search-box input::placeholder {
+            color: #666;
+        }
+
+        .contacts-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 5px;
+        }
+
+        .contact-item:hover, .contact-item.active {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .contact-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-left: 15px;
+            object-fit: cover;
+        }
+
+        .contact-info {
+            flex: 1;
+        }
+
+        .contact-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .contact-preview {
+            font-size: 13px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .contact-time {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-dark);
+        }
+
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .welcome-icon {
+            font-size: 100px;
+            margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translate: translateY(-20px); }
+        }
+
+        .welcome-screen h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-screen p {
+            color: var(--text-secondary);
+        }
+
+        .chat-header {
+            padding: 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-header img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .chat-header-info h3 {
+            font-size: 18px;
+        }
+
+        .chat-header-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            animation: messageSlide 0.3s ease;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.sent {
+            background: linear-gradient(135deg, var(--primary), #00897b);
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.received {
+            background: var(--bg-card);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 5px;
+            text-align: left;
+        }
+
+        .input-area {
+            padding: 20px;
+            background: var(--bg-card);
+            display: flex;
+            gap: 15px;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 15px 20px;
+            background: var(--bg-light);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .send-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-profile" onclick="goToProfile()">
+                    <img src="" alt="أنا" class="user-avatar" id="currentAvatar">
+                    <div class="user-info">
+                        <h3 id="currentName">أنا</h3>
+                        <div class="user-status">
+                            <span class="status-dot"></span>
+                            <span>متصل</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="action-btn" onclick="openNewChat()">💬 جديد</button>
+                    <button class="action-btn" onclick="goToGroups()">👥 مجموعات</button>
+                </div>
+            </div>
+
+            <div class="search-box">
+                <input type="text" placeholder="🔍 البحث..." id="searchInput" oninput="searchContacts()">
+            </div>
+
+            <div class="contacts-list" id="contactsList">
+                <!-- Contacts loaded here -->
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area">
+            <div class="welcome-screen" id="welcomeScreen">
+                <div class="welcome-icon">💬</div>
+                <h2>مرحباً بك في دردشتي</h2>
+                <p>اختر محادثة للبدء أو أنشئ محادثة جديدة</p>
+            </div>
+
+            <div class="chat-header hidden" id="chatHeader">
+                <img src="" id="chatAvatar">
+                <div class="chat-header-info">
+                    <h3 id="chatName"></h3>
+                    <p id="chatStatus">متصل الآن</p>
+                </div>
+            </div>
+
+            <div class="messages-container hidden" id="messagesContainer"></div>
+
+            <div class="input-area hidden" id="inputArea">
+                <input type="text" id="messageInput" placeholder="اكتب رسالتك..." onkeypress="handleKeyPress(event)">
+                <button class="send-btn" onclick="sendMessage()">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // التحقق من تسجيل الدخول
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if(!currentUser) {
+            window.location.href = 'index.html';
+        }
+
+        let currentChat = null;
+        let messages = JSON.parse(localStorage.getItem('messages') || '{}');
+
+        // تهيئة
+        function init() {
+            document.getElementById('currentAvatar').src = currentUser.avatar;
+            document.getElementById('currentName').textContent = currentUser.fullName;
+            
+            // تحديث الحالة
+            updateUserStatus(true);
+            
+            loadContacts();
+            
+            // محاكاة رسائل واردة
+            setInterval(simulateIncomingMessage, 30000);
+        }
+
+        function updateUserStatus(online) {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.id === currentUser.id);
+            if(user) {
+                user.isOnline = online;
+                user.lastActive = new Date().toISOString();
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('currentUser', JSON.stringify(user));
+            }
+        }
+
+        function loadContacts() {
+            const list = document.getElementById('contactsList');
+            list.innerHTML = '';
+
+            const contacts = currentUser.contacts || [];
+            
+            if(contacts.length === 0) {
+                list.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">لا توجد جهات اتصال<br>أضف أصدقاءك!</div>';
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            contacts.forEach(contactId => {
+                const user = users.find(u => u.id === contactId);
+                if(!user) return;
+
+                const chatKey = getChatKey(currentUser.id, user.id);
+                const chatMessages = messages[chatKey] || [];
+                const lastMsg = chatMessages[chatMessages.length - 1];
+
+                const div = document.createElement('div');
+                div.className = 'contact-item';
+                div.onclick = () => openChat(user);
+                
+                div.innerHTML = `
+                    <img src="${user.avatar}" class="contact-avatar">
+                    <div class="contact-info">
+                        <div class="contact-name">${ <div class="contact-name">${user.fullName}</div>
+                        <div class="contact-preview">${lastMsg ? lastMsg.text.substring(0, 30) + '...' : 'لا توجد رسائل'}</div>
+                    </div>
+                    <div class="contact-time">${lastMsg ? formatTime(lastMsg.time) : ''}</div>
+                `;
+                
+                list.appendChild(div);
+            });
+        }
+
+        function openChat(user) {
+            currentChat = user;
+            
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('chatHeader').classList.remove('hidden');
+            document.getElementById('messagesContainer').classList.remove('hidden');
+            document.getElementById('inputArea').classList.remove('hidden');
+            
+            document.getElementById('chatAvatar').src = user.avatar;
+            document.getElementById('chatName').textContent = user.fullName;
+            document.getElementById('chatStatus').textContent = user.isOnline ? 'متصل الآن' : 'غير متصل';
+            
+            loadMessages();
+        }
+
+        function loadMessages() {
+            const container = document.getElementById('messagesContainer');
+            container.innerHTML = '';
+            
+            const chatKey = getChatKey(currentUser.id, currentChat.id);
+            const chatMessages = messages[chatKey] || [];
+
+            chatMessages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = `message ${msg.sender === currentUser.id ? 'sent' : 'received'}`;
+                div.innerHTML = `
+                    ${msg.text}
+                    <div class="message-time">${formatTime(msg.time)} ${msg.sender === currentUser.id ? '✓' : ''}</div>
+                `;
+                container.appendChild(div);
+            });
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            if(!text || !currentChat) return;
+
+            const chatKey = getChatKey(currentUser.id, currentChat.id);
+            if(!messages[chatKey]) messages[chatKey] = [];
+
+            messages[chatKey].push({
+                id: Date.now(),
+                sender: currentUser.id,
+                text: text,
+                time: new Date().toISOString(),
+                read: false
+            });
+
+            localStorage.setItem('messages', JSON.stringify(messages));
+            input.value = '';
+            loadMessages();
+            loadContacts();
+
+            // محاكاة رد
+            setTimeout(() => simulateReply(currentChat.id), 2000);
+        }
+
+        function simulateReply(contactId) {
+            if(!currentChat || currentChat.id !== contactId) return;
+
+            const replies = ['مرحباً! 👋', 'كيف حالك؟', 'شكراً لك! 😊', 'حاضر', 'أتفق معك 👍'];
+            
+            const chatKey = getChatKey(currentUser.id, contactId);
+            if(!messages[chatKey]) messages[chatKey] = [];
+
+            messages[chatKey].push({
+                id: Date.now(),
+                sender: contactId,
+                text: replies[Math.floor(Math.random() * replies.length)],
+                time: new Date().toISOString(),
+                read: false
+            });
+
+            localStorage.setItem('messages', JSON.stringify(messages));
+            loadMessages();
+            loadContacts();
+        }
+
+        function simulateIncomingMessage() {
+            // محاكاة رسائل من جهات اتصال عشوائية
+        }
+
+        function handleKeyPress(e) {
+            if(e.key === 'Enter') sendMessage();
+        }
+
+        function searchContacts() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const items = document.querySelectorAll('.contact-item');
+            
+            items.forEach(item => {
+                const name = item.querySelector('.contact-name').textContent.toLowerCase();
+                item.style.display = name.includes(term) ? 'flex' : 'none';
+            });
+        }
+
+        function getChatKey(id1, id2) {
+            return [id1, id2].sort().join('_');
+        }
+
+        function formatTime(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleTimeString('ar-SA', {hour: '2-digit', minute: '2-digit'});
+        }
+
+        function goToProfile() {
+            window.location.href = 'profile.html';
+        }
+
+        function goToGroups() {
+            window.location.href = 'groups.html';
+        }
+
+        function openNewChat() {
+            const phone = prompt('أدخل رقم الهاتف أو اسم المستخدم:');
+            if(!phone) return;
+
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.phone === phone || u.username === phone || u.username === '@' + phone);
+
+            if(!user) {
+                alert('المستخدم غير موجود');
+                return;
+            }
+
+            if(user.id === currentUser.id) {
+                alert('لا يمكنك إضافة نفسك');
+                return;
+            }
+
+            // إضافة لكلاهما
+            if(!currentUser.contacts) currentUser.contacts = [];
+            if(!user.contacts) user.contacts = [];
+
+            if(!currentUser.contacts.includes(user.id)) {
+                currentUser.contacts.push(user.id);
+                user.contacts.push(currentUser.id);
+
+                // تحديث التخزين
+                const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
+                const myIndex = allUsers.findIndex(u => u.id === currentUser.id);
+                const theirIndex = allUsers.findIndex(u => u.id === user.id);
+                
+                allUsers[myIndex] = currentUser;
+                allUsers[theirIndex] = user;
+                
+                localStorage.setItem('users', JSON.stringify(allUsers));
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                loadContacts();
+            }
+
+            openChat(user);
+        }
+
+        // تسجيل الخروج عند إغلاق
+        window.onbeforeunload = () => {
+            updateUserStatus(false);
+        };
+
+        init();
+    </script>
+</body>
+</html>
