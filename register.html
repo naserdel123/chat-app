@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب | دردشتي</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        :root {
+            --primary: #00d4aa;
+            --secondary: #00897b;
+            --bg-dark: #0f0f1a;
+            --bg-card: #1a1a2e;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #999;
+            transition: all 0.3s;
+        }
+
+        .step.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .step.completed {
+            background: #4caf50;
+            color: white;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        label span {
+            color: #999;
+            font-size: 12px;
+            font-weight: normal;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .error-input {
+            border-color: #f44336 !important;
+        }
+
+        .error-text {
+            color: #f44336;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 212, 170, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .avatar-selection {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .avatar-option {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 4px solid transparent;
+            transition: all 0.3s;
+            overflow: hidden;
+        }
+
+        .avatar-option img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-option:hover {
+            transform: scale(1.1);
+        }
+
+        .avatar-option.selected {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 212, 170, 0.4);
+        }
+
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .success-screen.active {
+            display: block;
+            animation: scaleIn 0.5s;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: #4caf50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            color: white;
+            margin: 0 auto 20px;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .links a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .global-error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">📝</div>
+        <h1>إنشاء حساب جديد</h1>
+        <p class="subtitle">انضم إلينا في دقيقة واحدة</p>
+
+        <div class="global-error" id="globalError"></div>
+
+        <div class="step-indicator">
+            <div class="step active" id="step1Indicator">1</div>
+            <div class="step" id="step2Indicator">2</div>
+            <div class="step" id="step3Indicator">3</div>
+        </div>
+
+        <!-- الخطوة 1: المعلومات الأساسية -->
+        <div class="form-step active" id="step1">
+            <div class="form-group">
+                <label>الاسم الكامل *</label>
+                <input type="text" id="fullName" placeholder="محمد أحمد">
+                <div class="error-text" id="nameError">الاسم مطلوب (3 أحرف على الأقل)</div>
+            </div>
+
+            <div class="form-group">
+                <label>رقم الهاتف *</label>
+                <input type="tel" id="phone" placeholder="0501234567">
+                <div class="error-text" id="phoneError">رقم الهاتف مطلوب (10 أرقام)</div>
+            </div>
+
+            <div class="form-group">
+                <label>البريد الإلكتروني <span>(اختياري)</span></label>
+                <input type="email" id="email" placeholder="example@email.com">
+                <div class="error-text" id="emailError">البريد الإلكتروني غير صالح</div>
+            </div>
+
+            <button class="btn-primary" onclick="goToStep(2)" style="width: 100%;">التالي</button>
+        </div>
+
+        <!-- الخطوة 2: الأمان -->
+        <div class="form-step" id="step2">
+            <div class="form-group">
+                <label>اسم المستخدم *</label>
+                <input type="text" id="username" placeholder="mohammed123">
+                <div class="error-text" id="usernameError">اسم المستخدم مطلوب (4 أحرف على الأقل)</div>
+            </div>
+
+            <div class="form-group">
+                <label>كلمة المرور *</label>
+                <input type="password" id="password" placeholder="********">
+                <div class="error-text" id="passwordError">كلمة المرور يجب أن تكون 6 أحرف على الأقل</div>
+            </div>
+
+            <div class="form-group">
+                <label>تأكيد كلمة المرور *</label>
+                <input type="password" id="confirmPassword" placeholder="********">
+                <div class="error-text" id="confirmError">كلمتا المرور غير متطابقتين</div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-secondary" onclick="goToStep(1)">السابق</button>
+                <button class="btn-primary" onclick="goToStep(3)">التالي</button>
+            </div>
+        </div>
+
+        <!-- الخطوة 3: الصورة الشخصية -->
+        <div class="form-step" id="step3">
+            <label style="text-align: center; margin-bottom: 20px;">اختر صورتك الشخصية</label>
+            
+            <div class="avatar-selection">
+                <div class="avatar-option selected" onclick="selectAvatar(this, 'https://i.pravatar.cc/150?img=11')">
+                    <img src="https://i.pravatar.cc/150?img=11">
+                </div>
+                <div class="avatar-option" onclick="selectAvatar(this, 'https://i.pravatar.cc/150?img=12')">
+                    <img src="https://i.pravatar.cc/150?img=12">
+                </div>
+                <div class="avatar-option" onclick="selectAvatar(this, 'https://i.pravatar.cc/150?img=13')">
+                    <img src="https://i.pravatar.cc/150?img=13">
+                </div>
+                <div class="avatar-option" onclick="selectAvatar(this, 'https://i.pravatar.cc/150?img=14')">
+                    <img src="https://i.pravatar.cc/150?img=14">
+                </div>
+                <div class="avatar-option" onclick="selectAvatar(this, 'https://i.pravatar.cc/150?img=15')">
+                    <img src="https://i.pravatar.cc/150?img=15">
+                </div>
+                <div class="avatar-option" onclick="selectAvatar(this, 'https://i.pravatar.cc/150?img=16')">
+                    <img src="https://i.pravatar.cc/150?img=16">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <label>أو أدخل رابط صورة خاصة <span>(اختياري)</span></label>
+                <input type="url" id="customAvatar" placeholder="https://example.com/photo.jpg" onchange="useCustomAvatar()">
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-secondary" onclick="goToStep(2)">السابق</button>
+                <button class="btn-primary" onclick="submitRegistration()">إنشاء الحساب</button>
+            </div>
+        </div>
+
+        <!-- شاشة النجاح -->
+        <div class="success-screen" id="successScreen">
+            <div class="success-icon">✓</div>
+            <h2>تم إنشاء حسابك!</h2>
+            <p style="color: #666; margin: 15px 0;">جاري تحويلك للتطبيق...</p>
+            <div style="width: 100%; height: 4px; background: #e0e0e0; border-radius: 2px; margin-top: 20px;">
+                <div style="height: 100%; background: var(--primary); width: 0; animation: loadProgress 2s forwards;"></div>
+            </div>
+        </div>
+
+        <div class="links">
+            <p>لديك حساب؟ <a href="index.html">تسجيل الدخول</a></p>
+        </div>
+    </div>
+
+    <style>
+        @keyframes loadProgress {
+            to { width: 100%; }
+        }
+    </style>
+
+    <script>
+        let currentStep = 1;
+        let selectedAvatar = 'https://i.pravatar.cc/150?img=11';
+
+        // التحقق من وجود مستخدم مسجل
+        if(localStorage.getItem('currentUser')) {
+            window.location.href = 'chat.html';
+        }
+
+        function goToStep(step) {
+            // التحقق من الخطوة الحالية قبل الانتقال
+            if(step > currentStep && !validateStep(currentStep)) {
+                return;
+            }
+
+            // إخفاء الخطوة الحالية
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            
+            // تحديث المؤشرات
+            document.getElementById(`step${currentStep}Indicator`).classList.remove('active');
+            if(step > currentStep) {
+                document.getElementById(`step${currentStep}Indicator`).classList.add('completed');
+            }
+            
+            // إظهار الخطوة الجديدة
+            document.getElementById(`step${step}`).classList.add('active');
+            document.getElementById(`step${step}Indicator`).classList.add('active');
+            
+            currentStep = step;
+        }
+
+        function validateStep(step) {
+            let valid = true;
+
+            if(step === 1) {
+                // التحقق من الاسم
+                const name = document.getElementById('fullName').value.trim();
+                if(name.length < 3) {
+                    showError('nameError', 'fullName');
+                    valid = false;
+                } else {
+                    hideError('nameError', 'fullName');
+                }
+
+                // التحقق من الهاتف
+                const phone = document.getElementById('phone').value.trim();
+                if(phone.length < 10 || !/^\d+$/.test(phone)) {
+                    showError('phoneError', 'phone');
+                    valid = false;
+                } else {
+                    hideError('phoneError', 'phone');
+                }
+
+                // التحقق من البريد (اختياري)
+                const email = document.getElementById('email').value.trim();
+                if(email && !email.includes('@')) {
+                    showError('emailError', 'email');
+                    valid = false;
+                } else {
+                    hideError('emailError', 'email');
+                }
+            }
+
+            if(step === 2) {
+                // التحقق من اسم المستخدم
+                const username = document.getElementById('username').value.trim();
+                if(username.length < 4) {
+                    showError('usernameError', 'username');
+                    valid = false;
+                } else {
+                    hideError('usernameError', 'username');
+                }
+
+                // التحقق من كلمة المرور
+                const password = document.getElementById('password').value;
+                if(password.length < 6) {
+                    showError('passwordError', 'password');
+                    valid = false;
+                } else {
+                    hideError('passwordError', 'password');
+                }
+
+                // التحقق من التأكيد
+                const confirm = document.getElementById('confirmPassword').value;
+                if(confirm !== password) {
+                    showError('confirmError', 'confirmPassword');
+                    valid = false;
+                } else {
+                    hideError('confirmError', 'confirmPassword');
+                }
+            }
+
+            return valid;
+        }
+
+        function showError(errorId, inputId) {
+            document.getElementById(errorId).style.display = 'block';
+            document.getElementById(inputId).classList.add('error-input');
+        }
+
+        function hideError(errorId, inputId) {
+            document.getElementById(errorId).style.display = 'none';
+            document.getElementById(inputId).classList.remove('error-input');
+        }
+
+        function selectAvatar(element, url) {
+            document.querySelectorAll('.avatar-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedAvatar = url;
+            document.getElementById('customAvatar').value = '';
+        }
+
+        function useCustomAvatar() {
+            const url = document.getElementById('customAvatar').value.trim();
+            if(url) {
+                document.querySelectorAll('.avatar-option').forEach(el => {
+                    el.classList.remove('selected');
+                });
+                selectedAvatar = url;
+            }
+        }
+
+        function submitRegistration() {
+            // جمع البيانات
+            const userData = {
+                id: Date.now(),
+                fullName: document.getElementById('fullName').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                email: document.getElementById('email').value.trim() || null,
+                username: '@' + document.getElementById('username').value.trim().replace('@', ''),
+                password: document.getElementById('password').value,
+                avatar: selectedAvatar,
+                role: 'user',
+                isOnline: true,
+                createdAt: new Date().toISOString(),
+                lastLogin: new Date().toISOString(),
+                contacts: [],
+                groups: [],
+                settings: {
+                    darkMode: false,
+                    notifications: true
+                }
+            };
+
+            // التحقق من عدم التكرار
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            if(users.find(u => u.phone === userData.phone)) {
+                showGlobalError('رقم الهاتف مسجل مسبقاً');
+                goToStep(1);
+                return;
+            }
+            
+            if(users.find(u => u.username === userData.username)) {
+                showGlobalError('اسم المستخدم مسجل مسبقاً');
+                goToStep(2);
+                return;
+            }
+
+            if(userData.email && users.find(u => u.email === userData.email)) {
+                showGlobalError('البريد الإلكتروني مسجل مسبقاً');
+                goToStep(1);
+                return;
+            }
+
+            // إنشاء المشرف الافتراضي إذا لم يوجد
+            if(!users.find(u => u.role === 'superadmin')) {
+                users.push({
+                    id: 1,
+                    fullName: 'المشرف العام',
+                    phone: 'admin',
+                    email: 'admin@chat.app',
+                    username: '@admin',
+                    password: 'admin123',
+                    avatar: 'https://i.pravatar.cc/150?img=1',
+                    role: 'superadmin',
+                    isOnline: false,
+                    createdAt: new Date().toISOString(),
+                    contacts: [],
+                    groups: []
+                });
+            }
+
+            // حفظ المستخدم الجديد
+            users.push(userData);
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+
+            // إظهار شاشة النجاح
+            document.getElementById('step3').classList.remove('active');
+            document.querySelector('.step-indicator').style.display = 'none';
+            document.querySelector('.links').style.display = 'none';
+            document.getElementById('successScreen').classList.add('active');
+
+            // التحويل
+            setTimeout(() => {
+                window.location.href = 'chat.html';
+            }, 2000);
+        }
+
+        function showGlobalError(msg) {
+            const el = document.getElementById('globalError');
+            el.textContent = '⚠️ ' + msg;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+    </script>
+</body>
+</html>
