@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب | تطبيق المراسلة</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        :root {
+            --primary: #00d4aa;
+            --secondary: #00897b;
+            --accent: #ffd700;
+            --dark: #1a1a2e;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .register-wrapper {
+            width: 100%;
+            max-width: 500px;
+            perspective: 1000px;
+        }
+
+        .register-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            animation: cardEntry 1s ease-out;
+            transform-style: preserve-3d;
+        }
+
+        @keyframes cardEntry {
+            from {
+                opacity: 0;
+                transform: rotateX(-30deg) translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: rotateX(0) translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #999;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+        }
+
+        .step.active {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(0, 212, 170, 0.5);
+        }
+
+        .step.completed {
+            background: #4caf50;
+            color: white;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 3px;
+            background: #e0e0e0;
+            left: 100%;
+            margin-left: 5px;
+            transition: all 0.3s;
+        }
+
+        .step:last-child::after { display: none; }
+        .step.completed::after { background: #4caf50; }
+
+        .form-step {
+            display: none;
+            animation: stepSlide 0.5s ease;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        @keyframes stepSlide {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .input-field {
+            position: relative;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 212, 170, 0.1);
+            transform: scale(1.02);
+        }
+
+        .input-hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .avatar-selection {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .avatar-option {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 4px solid transparent;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .avatar-option img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-option:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .avatar-option.selected {
+            border-color: var(--primary);
+            transform: scale(1.15);
+            box-shadow: 0 0 30px rgba(0, 212, 170, 0.4);
+        }
+
+        .avatar-option.selected::after {
+            content: '✓';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--primary);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 212, 170, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(0, 212, 170, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .success-animation {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .success-checkmark {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+
+        .checkmark-circle {
+            width: 100%;
+            height: 100%;
+            border: 4px solid #4caf50;
+            border-radius: 50%;
+            animation: circleScale 0.5s ease-in-out;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 50px;
+            color: #4caf50;
+            animation: checkmarkScale 0.5s ease-in-out 0.3s forwards;
+        }
+
+        @keyframes circleScale {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes checkmarkScale {
+            to { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .error-shake {
+            animation: shake 0.5s;
+            border-color: #f44336 !important;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .password-strength {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .password-strength.show { display: block; }
+
+        .strength-bar {
+            height: 100%;
+            width: 0;
+            transition: all 0.3s;
+            border-radius: 2px;
+        }
+
+        .strength-weak { width: 33%; background: #f44336; }
+        .strength-medium { width: 66%; background: #ff9800; }
+        .strength-strong { width: 100%; background: #4caf50; }
+
+        @media (max-width: 480px) {
+            .register-card { padding: 25px; }
+            .avatar-option { width: 60px; height: 60px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-wrapper">
+        <div class="register-card">
+            <div class="header">
+                <h1>🚀 انضم إلينا</h1>
+                <p style="color: #666;">أنشئ حسابك في ثوانٍ</p>
+            </div>
+
+            <div class="step-indicator">
+                <div class="step active" data-step="1">1</div>
+                <div class="step" data-step="2">2</div>
+                <div class="step" data-step="3">3</div>
+            </div>
+
+            <!-- الخطوة 1: المعلومات الأساسية -->
+            <div class="form-step active" id="step1">
+                <div class="input-group">
+                    <label>الاسم الكامل *</label>
+                    <div class="input-field">
+                        <input type="text" id="fullName" placeholder="محمد أحمد العلي" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>رقم الهاتف *</label>
+                    <div class="input-field">
+                        <input type="tel" id="phone" placeholder="0501234567" required>
+                    </div>
+                    <span class="input-hint">سيتم استخدامه لتسجيل الدخول</span>
+                </div>
+
+                <div class="input-group">
+                    <label>البريد الإلكتروني</label>
+                    <div class="input-field">
+                        <input type="email" id="email" placeholder="example@email.com">
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn-primary" onclick="nextStep(2)">التالي →</button>
+                </div>
+            </div>
+
+            <!-- الخطوة 2: الأمان -->
+            <div class="form-step" id="step2">
+                <div class="input-group">
+                    <label>اسم المستخدم *</label>
+                    <div class="input-field">
+                        <input type="text" id="username" placeholder="@username" required>
+                    </div>
+                    <span class="input-hint">يجب أن يبدأ بـ @ ويكون فريداً</span>
+                </div>
+
+                <div class="input-group">
+                    <label>كلمة المرور *</label>
+                    <div class="input-field">
+                        <input type="password" id="password" placeholder="********" required oninput="checkStrength(this.value)">
+                    </div>
+                    <div class="password-strength" id="strengthBar">
+                        <div class="strength-bar" id="strengthValue"></div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>تأكيد كلمة المرور *</label>
+                    <div class="input-field">
+                        <input type="password" id="confirmPass" placeholder="********" required>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn-secondary" onclick="prevStep(1)">← السابق</button>
+                    <button class="btn-primary" onclick="nextStep(3)">التالي →</button>
+                </div>
+            </div>
+
+            <!-- الخطوة 3: الصورة الشخصية -->
+            <div class="form-step" id="step3">
+                <label>اختر صورتك الشخصية</label>
+                <div class="avatar-selection">
+                    <div class="avatar-option selected" onclick="selectAvatar(this, 'https://i.pravatar.cc/150?img=11')">
+                        <img src="https://i.pravatar.cc/150?img=11" alt="Avatar 1">
+                    </div>
+                    <div class="avatar-option" onclick="selectAvatar(this, 'https://i.pravatar.cc/150?img=12')">
+                        <img src="https://i.pravatar.cc/150?img=12" alt="Avatar 2">
+                    </div>
+                    <div class="avatar-option" onclick="selectAvatar(this, 'https://i.pravatar.cc/150?img=13')">
+                        <img src="https://i.pravatar.cc/150?img=13" alt="Avatar 3">
+                    </div>
+                    <div class="avatar-option" onclick="selectAvatar(this, 'https://i.pravatar.cc/150?img=14')">
+                        <img src="https://i.pravatar.cc/150?img=14" alt="Avatar 4">
+                    </div>
+                    <div class="avatar-option" onclick="selectAvatar(this, 'https://i.pravatar.cc/150?img=15')">
+                        <img src="https://i.pravatar.cc/150?img=15" alt="Avatar 5">
+                    </div>
+                    <div class="avatar-option" onclick="selectAvatar(this, 'https://i.pravatar.cc/150?img=16')">
+                        <img src="https://i.pravatar.cc/150?img=16" alt="Avatar 6">
+                    </div>
+                </div>
+
+                <div class="input-group" style="margin-top: 20px;">
+                    <label>أو أدخل رابط صورة خاصة</label>
+                    <input type="url" id="customAvatar" placeholder="https://example.com/photo.jpg" onchange="useCustomAvatar(this.value)">
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn-secondary" onclick="prevStep(2)">← السابق</button>
+                    <button class="btn-primary" onclick="submitRegistration()">🚀 إنشاء الحساب</button>
+                </div>
+            </div>
+
+            <!-- نجاح التسجيل -->
+            <div class="success-animation" id="successStep">
+                <div class="success-checkmark">
+                    <div class="checkmark-circle"></div>
+                    <div class="checkmark">✓</div>
+                </div>
+                <h2 style="color: #4caf50; margin-bottom: 15px;">تم إنشاء حسابك!</h2>
+                <p style="color: #666; margin-bottom: 30px;">جاري تحويلك إلى التطبيق...</p>
+                <div style="width: 100%; height: 4px; background: #e0e0e0; border-radius: 2px; overflow: hidden;">
+                    <div style="height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0; animation: loadProgress 2s ease forwards;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes loadProgress {
+            to { width: 100%; }
+        }
+    </style>
+
+    <script>
+        let currentStep = 1;
+        let selectedAvatar = 'https://i.pravatar.cc/150?img=11';
+        let formData = {};
+
+        function nextStep(step) {
+            if(!validateStep(currentStep)) return;
+            
+            document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + step).classList.add('active');
+            
+            document.querySelectorAll('.step').forEach(s => {
+                const stepNum = parseInt(s.dataset.step);
+                s.classList.remove('active', 'completed');
+                if(stepNum === step) s.classList.add('active');
+                else if(stepNum < step) s.classList.add('completed');
+            });
+            
+            currentStep = step;
+            saveStepData();
+        }
+
+        function prevStep(step) {
+            nextStep(step);
+        }
+
+        function validateStep(step) {
+            let valid = true;
+            
+            if(step === 1) {
+                const name = document.getElementById('fullName').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                
+                if(name.length < 3) {
+                    document.getElementById('fullName').classList.add('error-shake');
+                    valid = false;
+                }
+                if(phone.length < 10) {
+                    document.getElementById('phone').classList.add('error-shake');
+                    valid = false;
+                }
+            }
+            
+            if(step === 2) {
+                const username = document.getElementById('username').value.trim();
+                const pass = document.getElementById('password').value;
+                const confirm = document.getElementById('confirmPass').value;
+                
+                if(!username.startsWith('@') || username.length < 4) {
+                    document.getElementById('username').classList.add('error-shake');
+                    valid = false;
+                }
+                if(pass.length < 6) {
+                    document.getElementById('password').classList.add('error-shake');
+                    valid = false;
+                }
+                if(pass !== confirm) {
+                    document.getElementById('confirmPass').classList.add('error-shake');
+                    valid = false;
+                }
+            }
+            
+            setTimeout(() => {
+                document.querySelectorAll('.error-shake').forEach(el => el.classList.remove('error-shake'));
+            }, 500);
+            
+            return valid;
+        }
+
+        function checkStrength(password) {
+            const bar = document.getElementById('strengthBar');
+            const value = document.getElementById('strengthValue');
+            
+            bar.classList.add('show');
+            
+            let strength = 0;
+            if(password.length > 6) strength++;
+            if(password.length > 10) strength++;
+            if(/[A-Z]/.test(password)) strength++;
+            if(/[0-9]/.test(password)) strength++;
+            if(/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            value.className = 'strength-bar';
+            if(strength <= 2) value.classList.add('strength-weak');
+            else if(strength <= 4) value.classList.add('strength-medium');
+            else value.classList.add('strength-strong');
+        }
+
+        function selectAvatar(element, url) {
+            document.querySelectorAll('.avatar-option').forEach(a => a.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedAvatar = url;
+            document.getElementById('customAvatar').value = '';
+        }
+
+        function useCustomAvatar(url) {
+            if(url) selectedAvatar = url;
+        }
+
+        function saveStepData() {
+            formData = {
+                fullName: document.getElementById('fullName').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                avatar: selectedAvatar
+            };
+        }
+
+        function submitRegistration() {
+            saveStepData();
+            
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            // التحقق من التكرار
+            if(users.find(u => u.phone === formData.phone)) {
+                alert('❌ رقم الهاتف مسجل مسبقاً');
+                return;
+            }
+            if(users.find(u => u.username === formData.username)) {
+                alert('❌ اسم المستخدم مستخدم مسبقاً');
+                return;
+            }
+            
+            // إنشاء حساب جديد
+            const newUser = {
+                id: Date.now(),
+                ...formData,
+                role: 'user', // user, admin, superadmin
+                isOnline: true,
+                lastLogin: new Date().toISOString(),
+                createdAt: new Date().toISOString(),
+                con
