@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دخول | دردشتي</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        :root {
+            --primary: #00d4aa;
+            --secondary: #00897b;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 212, 170, 0.3);
+        }
+
+        .links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            font-size: 14px;
+        }
+
+        .links a {
+            color: var(--primary);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">💬</div>
+        <h1>تسجيل الدخول</h1>
+        
+        <div class="error" id="errorMsg"></div>
+        <div class="success" id="successMsg"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label>رقم الهاتف أو اسم المستخدم</label>
+                <input type="text" id="loginUser" placeholder="مثال: 0501234567" required>
+            </div>
+            
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="loginPass" placeholder="********" required>
+            </div>
+            
+            <button type="submit">دخول</button>
+        </form>
+
+        <div class="links">
+            <a href="register.html">إنشاء حساب جديد</a>
+            <a onclick="openRecoveryModal()">نسيت كلمة المرور؟</a>
+        </div>
+    </div>
+
+    <!-- Modal استرجاع كلمة المرور -->
+    <div class="modal" id="recoveryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔐 استرجاع كلمة المرور</h3>
+                <button class="close-btn" onclick="closeRecoveryModal()">×</button>
+            </div>
+            
+            <div id="recoveryStep1">
+                <p style="margin-bottom: 15px;">أدخل رقم هاتفك</p>
+                <div class="form-group">
+                    <input type="text" id="recoveryContact" placeholder="رقم الهاتف">
+                </div>
+                <button onclick="sendRecoveryCode()">إرسال رمز التحقق</button>
+            </div>
+
+            <div id="recoveryStep2" class="hidden">
+                <p style="margin-bottom: 15px;">أدخل الرمز:</p>
+                <div class="form-group">
+                    <input type="text" id="recoveryCodeInput" placeholder="الرمز" maxlength="6">
+                </div>
+                <button onclick="verifyRecoveryCode()">تحقق</button>
+            </div>
+
+            <div id="recoveryStep3" class="hidden">
+                <p style="margin-bottom: 15px;">كلمة المرور الجديدة:</p>
+                <div class="form-group">
+                    <input type="password" id="newPassword" placeholder="كلمة المرور الجديدة">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="confirmNewPassword" placeholder="تأكيد">
+                </div>
+                <button onclick="resetPassword()">حفظ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // التحقق من وجود مستخدم مسجل
+        if(localStorage.getItem('currentUser')) {
+            window.location.href = 'chat.html';
+        }
+
+        // تسجيل الدخول
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const user = document.getElementById('loginUser').value.trim();
+            const pass = document.getElementById('loginPass').value;
+            
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            const found = users.find(u => {
+                const matchPhone = u.phone === user;
+                const matchUsername = u.username === user || u.username === '@' + user.replace('@', '');
+                const matchEmail = u.email && u.email.toLowerCase() === user.toLowerCase();
+                return (matchPhone || matchUsername || matchEmail) && u.password === pass;
+            });
+            
+            if(found) {
+                found.isOnline = true;
+                found.lastLogin = new Date().toISOString();
+                
+                const userIndex = users.findIndex(u => u.id === found.id);
+                users[userIndex] = found;
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                localStorage.setItem('currentUser', JSON.stringify(found));
+                
+                showSuccess('تم تسجيل الدخول بنجاح!');
+                setTimeout(() => window.location.href = 'chat.html', 1000);
+            } else {
+                showError('بيانات الدخول غير صحيحة');
+            }
+        });
+
+        // استرجاع كلمة المرور
+        let recoveryUser = null;
+        let generatedCode = null;
+
+        function openRecoveryModal() {
+            document.getElementById('recoveryModal').classList.add('active');
+            document.getElementById('recoveryStep1').classList.remove('hidden');
+            document.getElementById('recoveryStep2').classList.add('hidden');
+            document.getElementById('recoveryStep3').classList.add('hidden');
+        }
+
+        function closeRecoveryModal() {
+            document.getElementById('recoveryModal').classList.remove('active');
+        }
+
+        function sendRecoveryCode() {
+            const contact = document.getElementById('recoveryContact').value.trim();
+            if(!contact) return alert('أدخل رقم الهاتف');
+
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            recoveryUser = users.find(u => u.phone === contact);
+
+            if(!recoveryUser) return alert('لا يوجد حساب بهذا الرقم');
+
+            generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+            alert(`رمز التحقق: ${generatedCode}`);
+            
+            document.getElementById('recoveryStep1').classList.add('hidden');
+            document.getElementById('recoveryStep2').classList.remove('hidden');
+        }
+
+        function verifyRecoveryCode() {
+            const input = document.getElementById('recoveryCodeInput').value.trim();
+            if(input !== generatedCode) return alert('رمز خاطئ');
+            
+            document.getElementById('recoveryStep2').classList.add('hidden');
+            document.getElementById('recoveryStep3').classList.remove('hidden');
+        }
+
+        function resetPassword() {
+            const newPass = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmNewPassword').value;
+
+            if(newPass.length < 6) return alert('كلمة المرور قصيرة');
+            if(newPass !== confirm) return alert('كلمتا المرور غير متطابقتين');
+
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const index = users.findIndex(u => u.id === recoveryUser.id);
+            users[index].password = newPass;
+            localStorage.setItem('users', JSON.stringify(users));
+
+            alert('تم تغيير كلمة المرور!');
+            closeRecoveryModal();
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+
+        function showSuccess(msg) {
+            const el = document.getElementById('successMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
