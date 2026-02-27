@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب | دردشتي</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #00d4aa;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #00d4aa, #00897b);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .avatar-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: block;
+            border: 4px solid #00d4aa;
+        }
+
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .avatar-option {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            opacity: 0.6;
+        }
+
+        .avatar-option.selected {
+            border-color: #00d4aa;
+            opacity: 1;
+        }
+
+        .upload-btn {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .error {
+            color: #f44336;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #4caf50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+            margin: 0 auto 20px;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .links a {
+            color: #00d4aa;
+            text-decoration: none;
+        }
+
+        .step-number {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo">📝</div>
+    <h1>إنشاء حساب</h1>
+    
+    <!-- الخطوة 1 -->
+    <div class="step active" id="step1">
+        <div class="step-number">الخطوة 1 من 3</div>
+        
+        <div class="form-group">
+            <label>الاسم الكامل *</label>
+            <input type="text" id="fullName" placeholder="محمد أحمد">
+            <div class="error" id="error1">الاسم مطلوب (3 أحرف على الأقل)</div>
+        </div>
+
+        <div class="form-group">
+            <label>رقم الهاتف *</label>
+            <input type="tel" id="phone" placeholder="0501234567">
+            <div class="error" id="error2">رقم الهاتف مطلوب</div>
+        </div>
+
+        <div class="form-group">
+            <label>البريد الإلكتروني (اختياري)</label>
+            <input type="email" id="email" placeholder="example@email.com">
+        </div>
+
+        <button class="btn" onclick="goStep2()">التالي</button>
+    </div>
+
+    <!-- الخطوة 2 -->
+    <div class="step" id="step2">
+        <div class="step-number">الخطوة 2 من 3</div>
+        
+        <div class="form-group">
+            <label>اسم المستخدم *</label>
+            <input type="text" id="username" placeholder="mohammed123">
+            <div class="error" id="error3">اسم المستخدم مطلوب</div>
+        </div>
+
+        <div class="form-group">
+            <label>كلمة المرور *</label>
+            <input type="password" id="password" placeholder="********">
+            <div class="error" id="error4">كلمة المرور 6 أحرف على الأقل</div>
+        </div>
+
+        <div class="form-group">
+            <label>تأكيد كلمة المرور *</label>
+            <input type="password" id="confirmPassword" placeholder="********">
+            <div class="error" id="error5">كلمتا المرور غير متطابقتين</div>
+        </div>
+
+        <button class="btn" onclick="goStep3()">التالي</button>
+        <button class="btn btn-secondary" onclick="backStep1()">الرجوع</button>
+    </div>
+
+    <!-- الخطوة 3 -->
+    <div class="step" id="step3">
+        <div class="step-number">الخطوة 3 من 3</div>
+        
+        <img src="https://i.pravatar.cc/150?img=11" class="avatar-preview" id="preview">
+        
+        <label class="upload-btn">
+            📷 اضغط لرفع صورة من جهازك
+            <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="loadImage(this)">
+        </label>
+
+        <div class="avatar-grid">
+            <img src="https://i.pravatar.cc/150?img=11" class="avatar-option selected" onclick="pickImage(this, 'https://i.pravatar.cc/150?img=11')">
+            <img src="https://i.pravatar.cc/150?img=12" class="avatar-option" onclick="pickImage(this, 'https://i.pravatar.cc/150?img=12')">
+            <img src="https://i.pravatar.cc/150?img=13" class="avatar-option" onclick="pickImage(this, 'https://i.pravatar.cc/150?img=13')">
+            <img src="https://i.pravatar.cc/150?img=14" class="avatar-option" onclick="pickImage(this, 'https://i.pravatar.cc/150?img=14')">
+            <img src="https://i.pravatar.cc/150?img=15" class="avatar-option" onclick="pickImage(this, 'https://i.pravatar.cc/150?img=15')">
+            <img src="https://i.pravatar.cc/150?img=16" class="avatar-option" onclick="pickImage(this, 'https://i.pravatar.cc/150?img=16')">
+            <img src="https://i.pravatar.cc/150?img=17" class="avatar-option" onclick="pickImage(this, 'https://i.pravatar.cc/150?img=17')">
+            <img src="https://i.pravatar.cc/150?img=18" class="avatar-option" onclick="pickImage(this, 'https://i.pravatar.cc/150?img=18')">
+        </div>
+
+        <button class="btn" onclick="finish()">إنشاء الحساب</button>
+        <button class="btn btn-secondary" onclick="backStep2()">الرجوع</button>
+    </div>
+
+    <!-- نجاح -->
+    <div class="success" id="success">
+        <div class="success-icon">✓</div>
+        <h2>تم إنشاء حسابك!</h2>
+        <p>جاري التحويل...</p>
+    </div>
+
+    <div class="links">
+        <p>لديك حساب؟ <a href="index.html">تسجيل الدخول</a></p>
+    </div>
+</div>
+
+<script>
+// ========== بيانات التسجيل ==========
+var userData = {
+    fullName: '',
+    phone: '',
+    email: '',
+    username: '',
+    password: '',
+    avatar: 'https://i.pravatar.cc/150?img=11'
+};
+
+// ========== الانتقال للخطوة 2 ==========
+function goStep2() {
+    var name = document.getElementById('fullName').value.trim();
+    var phone = document.getElementById('phone').value.trim();
+    var email = document.getElementById('email').value.trim();
+    
+    // التحقق
+    if(name.length < 3) {
+        document.getElementById('error1').style.display = 'block';
+        return;
+    }
+    document.getElementById('error1').style.display = 'none';
+    
+    if(phone.length < 10) {
+        document.getElementById('error2').style.display = 'block';
+        return;
+    }
+    document.getElementById('error2').style.display = 'none';
+    
+    // حفظ البيانات
+    userData.fullName = name;
+    userData.phone = phone;
+    userData.email = email;
+    
+    // الانتقال
+    document.getElementById('step1').classList.remove('active');
+    document.getElementById('step2').classList.add('active');
+}
+
+// ========== الانتقال للخطوة 3 ==========
+function goStep3() {
+    var username = document.getElementById('username').value.trim();
+    var password = document.getElementById('password').value;
+    var confirm = document.getElementById('confirmPassword').value;
+    
+    // التحقق
+    if(username.length < 4) {
+        document.getElementById('error3').style.display = 'block';
+        return;
+    }
+    document.getElementById('error3').style.display = 'none';
+    
+    if(password.length < 6) {
+        document.getElementById('error4').style.display = 'block';
+        return;
+    }
+    document.getElementById('error4').style.display = 'none';
+    
+    if(password !== confirm) {
+        document.getElementById('error5').style.display = 'block';
+        return;
+    }
+    document.getElementById('error5').style.display = 'none';
+    
+    // حفظ البيانات
+    userData.username = '@' + username.replace('@', '');
+    userData.password = password;
+    
+    // الانتقال
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step3').classList.add('active');
+}
+
+// ========== الرجوع ==========
+function backStep1() {
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step1').classList.add('active');
+}
+
+function backStep2() {
+    document.getElementById('step3').classList.remove('active');
+    document.getElementById('step2').classList.add('active');
+}
+
+// ========== اختيار الصورة ==========
+function pickImage(element, url) {
+    // إزالة التحديد السابق
+    document.querySelectorAll('.avatar-option').forEach(function(img) {
+        img.classList.remove('selected');
+    });
+    
+    // تحديد الجديد
+    element.classList.add('selected');
+    
+    // تحديث المعاينة
+    document.getElementById('preview').src = url;
+    userData.avatar = url;
+}
+
+// ========== رفع صورة ==========
+function loadImage(input) {
+    var file = input.files[0];
+    if(!file) return;
+    
+    if(!file.type.startsWith('image/')) {
+        alert('يرجى اختيار صورة');
+        return;
+    }
+    
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        document.getElementById('preview').src = e.target.result;
+        userData.avatar = e.target.result;
+        
+        // إزالة التحديد
+        document.querySelectorAll('.avatar-option').forEach(function(img) {
+            img.classList.remove('selected');
+        });
+    };
+    reader.readAsDataURL(file);
+}
+
+// ========== إنهاء التسجيل ==========
+function finish() {
+    // التحقق من عدم التكرار
+    var users = JSON.parse(localStorage.getItem('users') || '[]');
+    
+    for(var i = 0; i < users.length; i++) {
+        if(users[i].phone === userData.phone) {
+            alert('رقم الهاتف مسجل مسبقاً');
+            backStep1();
+            return;
+        }
+        if(users[i].username === userData.username) {
+            alert('اسم المستخدم مسجل مسبقاً');
+            backStep2();
+            return;
+        }
+    }
+    
+    // إنشاء المستخدم
+    var newUser = {
+        id: Date.now(),
+        fullName: userData.fullName,
+        phone: userData.phone,
+        email: userData.email,
+        username: userData.username,
+        password: userData.password,
+        avatar: userData.avatar,
+        role: 'user',
+        isOnline: true,
+        createdAt: new Date().toISOString(),
+        contacts: [],
+        groups: []
+    };
+    
+    // إضافة المشرف الافتراضي إذا لم يوجد
+    if(!users.find(function(u) { return u.role === 'superadmin'; })) {
+        users.push({
+            id: 1,
+            fullName: 'المشرف العام',
+            phone: 'admin',
+            email: 'admin@chat.app',
+            username: '@admin',
+            password: 'admin123',
+            avatar: 'https://i.pravatar.cc/150?img=1',
+            role: 'superadmin',
+            isOnline: false,
+            createdAt: new Date().toISOString(),
+            contacts: [],
+            groups: []
+        });
+    }
+    
+    // حفظ
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users));
+    localStorage.setItem('currentUser', JSON.stringify(newUser));
+    
+    // إظهار النجاح
+    document.getElementById('step3').classList.remove('active');
+    document.querySelector('.links').style.display = 'none';
+    document.getElementById('success').style.display = 'block';
+    
+    // التحويل
+    setTimeout(function() {
+        window.location.href = 'chat.html';
+    }, 1500);
+}
+
+// ========== التحقق من وجود مستخدم مسجل ==========
+if(localStorage.getItem('currentUser')) {
+    window.location.href = 'chat.html';
+}
+</script>
+
+</body>
+</html>
