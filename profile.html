@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الملف الشخصي | دردشتي</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        :root {
+            --primary: #00d4aa;
+            --secondary: #667eea;
+            --bg-dark: #0f0f1a;
+            --bg-card: #1a1a2e;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .profile-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+
+        .profile-header {
+            height: 150px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .avatar-section {
+            text-align: center;
+            margin-top: -75px;
+            padding: 0 30px;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid white;
+            object-fit: cover;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .change-avatar-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 45px;
+            height: 45px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 3px solid white;
+            font-size: 20px;
+            transition: all 0.3s;
+        }
+
+        .change-avatar-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .change-avatar-btn input {
+            display: none;
+        }
+
+        .profile-info {
+            padding: 30px;
+            text-align: center;
+        }
+
+        .profile-name {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .profile-username {
+            color: var(--primary);
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ff4757;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .settings-section {
+            padding: 30px;
+            border-top: 1px solid #eee;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .toggle {
+            width: 50px;
+            height: 26px;
+            background: #ddd;
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle.active {
+            background: var(--primary);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            right: 2px;
+            transition: all 0.3s;
+        }
+
+        .toggle.active::after {
+            right: 26px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="chat.html" class="back-btn">← العودة للدردشات</a>
+
+        <div class="profile-card">
+            <div class="profile-header"></div>
+            
+            <div class="avatar-section">
+                <div class="avatar-wrapper">
+                    <img src="" alt="Profile" class="profile-avatar" id="profileAvatar">
+                    <label class="change-avatar-btn">
+                        📷
+                        <input type="file" accept="image/*" onchange="changeAvatar(event)">
+                    </label>
+                </div>
+            </div>
+
+            <div class="profile-info">
+                <h1 class="profile-name" id="profileName">الاسم</h1>
+                <p class="profile-username" id="profileUsername">@username</p>
+                
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value" id="contactsCount">0</div>
+                        <div class="stat-label">جهة اتصال</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="groupsCount">0</div>
+                        <div class="stat-label">مجموعة</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="messagesCount">0</div>
+                        <div class="stat-label">رسالة</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="editProfile()">✏️ تعديل المعلومات</button>
+                <button class="btn btn-danger" onclick="logout()">🚪 تسجيل الخروج</button>
+            </div>
+
+            <div class="settings-section">
+                <h3 style="margin-bottom: 20px;">⚙️ الإعدادات</h3>
+                
+                <div class="setting-item">
+                    <span>الإشعارات</span>
+                    <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+                </div>
+                
+                <div class="setting-item">
+                    <span>الوضع الليلي</span>
+                    <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+                </div>
+                
+                <div class="setting-item">
+                    <span>صوت الرسائل</span>
+                    <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if(!currentUser) window.location.href = 'index.html';
+
+        function loadProfile() {
+            document.getElementById('profileAvatar').src = currentUser.avatar;
+            document.getElementById('profileName').textContent = currentUser.fullName;
+            document.getElementById('profileUsername').textContent = currentUser.username;
+            
+            document.getElementById('contactsCount').textContent = currentUser.contacts?.length || 0;
+            document.getElementById('groupsCount').textContent = currentUser.groups?.length || 0;
+            
+            // حساب الرسائل
+            const messages = JSON.parse(localStorage.getItem('messages') || '{}');
+            let count = 0;
+            Object.values(messages).forEach(msgs => {
+                count += msgs.filter(m => m.sender === currentUser.id).length;
+            });
+            document.getElementById('messagesCount').textContent = count;
+        }
+
+        function changeAvatar(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+
+            if(!file.type.startsWith('image/')) {
+                alert('يرجى اختيار ملف صورة');
+                return;
+            }
+
+            if(file.size > 5 * 1024 * 1024) {
+                alert('حجم الصورة كبير جداً');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const newAvatar = e.target.result;
+                
+                // تحديث المستخدم
+                currentUser.avatar = newAvatar;
+                currentUser.isCustomAvatar = true;
+                
+                // تحديث التخزين
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const index = users.findIndex(u => u.id === currentUser.id);
+                if(index !== -1) {
+                    users[index].avatar = newAvatar;
+                    users[index].isCustomAvatar = true;
+                }
+                
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                document.getElementById('profileAvatar').src = newAvatar;
+                alert('✅ تم تحديث الصورة');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function editProfile() {
+            const newName = prompt('الاسم الجديد:', currentUser.fullName);
+            if(newName && newName.trim().length >= 3) {
+                currentUser.fullName = newName.trim();
+                
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const index = users.findIndex(u => u.id === currentUser.id);
+                if(index !== -1) users[index].fullName = newName.trim();
+                
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                document.getElementById('profileName').textContent = newName.trim();
+            }
+        }
+
+        function logout() {
+            // تحديث الحالة
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const index = users.findIndex(u => u.id === currentUser.id);
+            if(index !== -1) {
+                users[index].isOnline = false;
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+            
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>
