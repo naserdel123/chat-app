@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المجموعات | دردشتي</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        :root {
+            --primary: #00d4aa;
+            --secondary: #667eea;
+            --bg-dark: #0f0f1a;
+            --bg-card: #1a1a2e;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg-dark);
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .back-link {
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header h1 {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .create-btn {
+            padding: 12px 25px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .create-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 212, 170, 0.3);
+        }
+
+        .groups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .group-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .group-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .group-header {
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            position: relative;
+        }
+
+        .group-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid var(--bg-card);
+            position: absolute;
+            bottom: -40px;
+            right: 20px;
+            object-fit: cover;
+        }
+
+        .group-body {
+            padding: 50px 20px 20px;
+        }
+
+        .group-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .group-desc {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .group-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .group-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn-enter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-leave {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+        }
+
+        .admin-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: gold;
+            color: #333;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <a href="chat.html" class="back-link">← العودة</a>
+                <h1 style="margin-top: 10px;">👥 مجموعاتي</h1>
+            </div>
+            <button class="create-btn" onclick="createNewGroup()">
+                ➕ مجموعة جديدة
+            </button>
+        </div>
+
+        <div class="groups-grid" id="groupsGrid"></div>
+    </div>
+
+    <script>
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if(!currentUser) window.location.href = 'index.html';
+
+        let groups = JSON.parse(localStorage.getItem('groups') || '[]');
+
+        function loadGroups() {
+            const grid = document.getElementById('groupsGrid');
+            const myGroups = groups.filter(g => g.members.includes(currentUser.id));
+
+            if(myGroups.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-icon">👥</div>
+                        <h2>لا توجد مجموعات</h2>
+                        <p>أنشئ مجموعتك الأولى وادعُ أصدقاءك</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = myGroups.map(group => {
+                const isAdmin = group.admins.includes(currentUser.id);
+                const isCreator = group.creator === currentUser.id;
+
+                return `
+                    <div class="group-card">
+                        ${isAdmin ? '<div class="admin-badge">⭐ مشرف</div>' : ''}
+                        <div class="group-header">
+                            <img src="${group.avatar}" class="group-avatar">
+                        </div>
+                        <div class="group-body">
+                            <h3 class="group-name">${group.name}</h3>
+                            <p class="group-desc">${group.description || 'لا يوجد وصف'}</p>
+                            <div class="group-stats">
+                                <span>👥 ${group.members.length} عضو</span>
+                                <span>📅 ${new Date(group.createdAt).toLocaleDateString('ar-SA')}</span>
+                            </div>
+                            <div class="group-actions">
+                                <button class="btn-small btn-enter" onclick="enterGroup(${group.id})">
+                                    الدخول
+                                </button>
+                                ${!isCreator ? `
+                                    <button class="btn-small btn-leave" onclick="leaveGroup(${group.id})">
+                                        مغادرة
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function createNewGroup() {
+            window.location.href = 'chat.html?createGroup=true';
+        }
+
+        function enterGroup(groupId) {
+            window.location.href = `chat.html?group=${groupId}`;
+        }
+
+        function leaveGroup(groupId) {
+            if(!confirm('هل أنت متأكد من مغادرة المجموعة؟')) return;
+
+            const group = groups.find(g => g.id === groupId);
+            group.members = group.members.filter(id => id !== currentUser.id);
+            group.admins = group.admins.filter(id => id !== currentUser.id);
+
+            localStorage.setItem('groups', JSON.stringify(groups));
+
+            // تحديث المستخدم
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.id === currentUser.id);
+            user.groups = user.groups.filter(id => id !== groupId);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            currentUser.groups = currentUser.groups.filter(id => id !== groupId);
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+            loadGroups();
+        }
+
+        loadGroups();
+    </script>
+</body>
+</html>
